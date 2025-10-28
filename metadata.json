@@ -1,0 +1,5 @@
+{
+  "name": "On-Time Traveler",
+  "description": "An application to help travelers plan their pre-departure schedule. Users can enter their flight or train time, and the app generates a dynamic timeline of tasks. The schedule is fully customizable, allowing users to add, remove, reorder, and change the duration of each task. The app also provides options to export the schedule to a calendar, share it, or copy it to the clipboard.",
+  "requestFramePermissions": []
+}
