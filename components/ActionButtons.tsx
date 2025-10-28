@@ -44,30 +44,31 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ scheduledSteps, departure
     }
   };
 
-  const handleAddToCalendar = () => {
+  const handleExportToCalendar = () => {
     if (scheduledSteps.length === 0) {
       alert("Your schedule is empty. Add some steps first!");
       return;
     }
-    const firstEvent = scheduledSteps[0];
-    const baseURL = "https://www.google.com/calendar/render?action=TEMPLATE";
-    const title = encodeURIComponent(`${firstEvent.emoji} ${firstEvent.title}`);
-    const startDate = toGoogleCalendarString(firstEvent.startTime);
-    const endDate = toGoogleCalendarString(firstEvent.endTime);
-    const dates = `${startDate}/${endDate}`;
-    const details = encodeURIComponent(generateScheduleText());
 
-    const calendarURL = `${baseURL}&text=${title}&dates=${dates}&details=${details}`;
-    window.open(calendarURL, '_blank');
+    const startTime = scheduledSteps[0].startTime;
+    const endTime = scheduledSteps[scheduledSteps.length - 1].endTime;
+    
+    const calendarUrl = new URL('https://www.google.com/calendar/render');
+    calendarUrl.searchParams.append('action', 'TEMPLATE');
+    calendarUrl.searchParams.append('text', `Travel Plan for Departure at ${departureTime}`);
+    calendarUrl.searchParams.append('dates', `${toGoogleCalendarString(startTime)}/${toGoogleCalendarString(endTime)}`);
+    calendarUrl.searchParams.append('details', generateScheduleText());
+    
+    window.open(calendarUrl.toString(), '_blank');
   };
 
   return (
     <div className="mt-8 pt-6 border-t border-brand-gray-200 flex items-center justify-center gap-4">
       <button 
-        onClick={handleAddToCalendar} 
+        onClick={handleExportToCalendar} 
         className="flex items-center justify-center p-3 border border-transparent rounded-full shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors"
-        aria-label="Add to Calendar"
-        title="Add to Calendar"
+        aria-label="Add to Google Calendar"
+        title="Add to Google Calendar"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" /></svg>
       </button>
