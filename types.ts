@@ -5,6 +5,7 @@ export interface Step {
   emoji: string;
   duration: number; // in minutes
   isCompleted: boolean;
+  description?: string;
 }
 
 export interface ScheduledStep extends Step {

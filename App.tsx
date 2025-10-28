@@ -41,10 +41,16 @@ const App: React.FC = () => {
       emoji: preset?.emoji || '📋',
       isCompleted: false,
     };
-    setSteps(prevSteps => [...prevSteps, newStep]);
+    // Insert new step before the last one (airport buffer)
+    setSteps(prevSteps => {
+        const allButLast = prevSteps.slice(0, prevSteps.length - 1);
+        const last = prevSteps[prevSteps.length - 1];
+        return [...allButLast, newStep, last];
+    });
   }, [setSteps]);
 
   const removeStep = useCallback((id: string) => {
+    if (id === 'airport-buffer') return; // Prevent removing the airport buffer
     setSteps(prevSteps => prevSteps.filter(step => step.id !== id));
   }, [setSteps]);
 
@@ -65,6 +71,12 @@ const App: React.FC = () => {
   }, [setSteps]);
 
   const reorderSteps = useCallback((startIndex: number, endIndex: number) => {
+    // Prevent the last item (airport buffer) from being the drop target.
+    // If dropped on the last item, place it just before.
+    if (endIndex >= steps.length - 1) {
+      endIndex = steps.length - 2;
+    }
+
     const result = Array.from(steps);
     const [removed] = result.splice(startIndex, 1);
     result.splice(endIndex, 0, removed);
@@ -129,7 +141,26 @@ const App: React.FC = () => {
         </main>
         
         <footer className="text-center mt-8 text-brand-gray-500">
-          <p>Made with ❤️ to make travel less stressful.</p>
+          <p>
+            Vibe coded by{' '}
+            <a
+              href="https://www.linkedin.com/in/meteatamel/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-blue hover:underline"
+            >
+              Mete Atamel
+            </a>{' '}
+            |{' '}
+            <a
+              href="https://github.com/meteatamel/on-time-traveler"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-brand-blue hover:underline"
+            >
+              GitHub repo
+            </a>
+          </p>
         </footer>
       </div>
     </div>

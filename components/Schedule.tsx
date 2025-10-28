@@ -65,25 +65,28 @@ const Schedule: React.FC<ScheduleProps> = ({
   return (
     <section>
       <ul className="space-y-3">
-        {steps.map((step, index) => (
-          <li
-            key={step.id}
-            draggable={isEditing}
-            onDragStart={(e) => isEditing && handleDragStart(e, index)}
-            onDragEnter={(e) => isEditing && handleDragEnter(e, index)}
-            onDragEnd={(e) => isEditing && handleDragEnd(e)}
-            onDragOver={(e) => isEditing && handleDragOver(e)}
-            className={`transition-all duration-300 ${isEditing ? (dragging ? 'cursor-grabbing' : 'cursor-grab') : ''}`}
-          >
-            <StepItem
-              step={step}
-              onRemove={removeStep}
-              onUpdateDuration={updateStepDuration}
-              onToggleCompletion={toggleStepCompletion}
-              isEditing={isEditing}
-            />
-          </li>
-        ))}
+        {steps.map((step, index) => {
+          const isDraggable = isEditing && step.id !== 'airport-buffer';
+          return (
+            <li
+              key={step.id}
+              draggable={isDraggable}
+              onDragStart={(e) => isDraggable && handleDragStart(e, index)}
+              onDragEnter={(e) => handleDragEnter(e, index)}
+              onDragEnd={(e) => isDraggable && handleDragEnd(e)}
+              onDragOver={handleDragOver}
+              className={`transition-all duration-300 ${isDraggable ? (dragging ? 'cursor-grabbing' : 'cursor-grab') : ''}`}
+            >
+              <StepItem
+                step={step}
+                onRemove={removeStep}
+                onUpdateDuration={updateStepDuration}
+                onToggleCompletion={toggleStepCompletion}
+                isEditing={isEditing}
+              />
+            </li>
+          );
+        })}
       </ul>
       <div className="mt-3">
         <div className="flex items-center gap-3 p-3 rounded-lg border border-brand-gray-300 bg-brand-gray-100">

@@ -11,6 +11,8 @@ interface StepItemProps {
 }
 
 const StepItem: React.FC<StepItemProps> = ({ step, onRemove, onUpdateDuration, onToggleCompletion, isEditing }) => {
+  const isLocked = step.id === 'airport-buffer';
+
   return (
     <div className={`flex items-center gap-3 p-3 rounded-lg border transition-all duration-300 ${step.isCompleted ? 'bg-green-50 border-green-200' : 'bg-white border-brand-gray-200'}`}>
       <div className="relative h-6 w-6 flex-shrink-0">
@@ -30,34 +32,35 @@ const StepItem: React.FC<StepItemProps> = ({ step, onRemove, onUpdateDuration, o
         <span className="text-2xl">{step.emoji}</span>
         <div className={`flex-grow ${step.isCompleted ? 'line-through text-brand-gray-400' : ''}`}>
           <p className="font-semibold text-brand-gray-800">{step.title}</p>
+          {step.description && <p className="text-xs text-brand-gray-500 italic">{step.description}</p>}
           <p className="text-sm text-brand-gray-500">
             {formatTime(step.startTime)} - {formatTime(step.endTime)}
           </p>
         </div>
       </div>
       {isEditing && (
-        <>
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              value={step.duration}
-              onChange={(e) => onUpdateDuration(step.id, parseInt(e.target.value) || 0)}
-              className="w-16 text-center border-brand-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white"
-              min="0"
-              aria-label="Duration in minutes"
-            />
-            <span className="text-sm text-brand-gray-500">min</span>
-          </div>
-          <button
-            onClick={() => onRemove(step.id)}
-            className="text-brand-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
-            aria-label="Remove step"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-          </button>
-        </>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            value={step.duration}
+            onChange={(e) => onUpdateDuration(step.id, parseInt(e.target.value) || 0)}
+            className="w-16 text-center border-brand-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white"
+            min="0"
+            aria-label="Duration in minutes"
+          />
+          <span className="text-sm text-brand-gray-500">min</span>
+        </div>
+      )}
+      {isEditing && !isLocked && (
+        <button
+          onClick={() => onRemove(step.id)}
+          className="text-brand-gray-400 hover:text-red-500 transition-colors p-1 rounded-full hover:bg-red-50"
+          aria-label="Remove step"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+          </svg>
+        </button>
       )}
     </div>
   );
