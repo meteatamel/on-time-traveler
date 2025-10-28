@@ -83,6 +83,12 @@ const App: React.FC = () => {
     setSteps(result);
   }, [steps, setSteps]);
 
+  const resetSchedule = useCallback(() => {
+    if (window.confirm('Are you sure you want to reset the schedule? This will restore the default steps and remove all customizations.')) {
+      setSteps(INITIAL_STEPS_CONFIG);
+    }
+  }, [setSteps]);
+
   if (!isClient) {
     return null; // Avoid rendering on the server or before hydration
   }
@@ -117,12 +123,22 @@ const App: React.FC = () => {
           <section>
             <div className="flex justify-between items-center mb-4">
                <h2 className="text-2xl font-semibold text-brand-gray-800">Your Schedule</h2>
-               <button 
-                onClick={() => setIsEditing(!isEditing)}
-                className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue ${isEditing ? 'bg-brand-blue text-white hover:bg-blue-700' : 'border border-brand-blue text-brand-blue hover:bg-blue-50'}`}
-               >
-                 {isEditing ? 'Done' : 'Customize'}
-               </button>
+               <div className="flex items-center gap-2">
+                 {isEditing && (
+                    <button
+                      onClick={resetSchedule}
+                      className="px-4 py-2 text-sm font-semibold rounded-md transition-colors border border-red-500 text-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                      Reset
+                    </button>
+                 )}
+                 <button 
+                  onClick={() => setIsEditing(!isEditing)}
+                  className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-blue ${isEditing ? 'bg-brand-blue text-white hover:bg-blue-700' : 'border border-brand-blue text-brand-blue hover:bg-blue-50'}`}
+                 >
+                   {isEditing ? 'Done' : 'Customize'}
+                 </button>
+               </div>
             </div>
             <Schedule
               steps={scheduledSteps}
