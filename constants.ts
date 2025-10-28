@@ -8,6 +8,15 @@ export const DEFAULT_STEP_PRESETS: StepPreset[] = [
   { title: 'Travel to airport/station', emoji: '🚗', defaultDuration: 90 },
   { title: 'Lunch/Dinner', emoji: '🍔', defaultDuration: 45 },
   { title: 'Double-check documents', emoji: '📄', defaultDuration: 10 },
+  { title: 'Charge electronics', emoji: '🔋', defaultDuration: 15 },
+  { title: 'Final check of the house', emoji: '🏠', defaultDuration: 10 },
+  { title: 'Check-in online', emoji: '📱', defaultDuration: 10 },
+  { title: 'Walk the dog', emoji: '🐶', defaultDuration: 20 },
+  { title: 'Prepare kids\' travel bags', emoji: '🧸', defaultDuration: 20 },
+  { title: 'Download offline content', emoji: '🎧', defaultDuration: 15 },
+  { title: 'Clear work emails', emoji: '💼', defaultDuration: 30 },
+  { title: 'Water plants', emoji: '🌱', defaultDuration: 5 },
+  { title: 'Take out the trash', emoji: '🗑️', defaultDuration: 5 },
 ];
 
 export const INITIAL_STEPS_CONFIG: Step[] = [

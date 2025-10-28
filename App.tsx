@@ -32,13 +32,13 @@ const App: React.FC = () => {
     setScheduledSteps(newScheduledSteps);
   }, [steps, departureTime]);
 
-  const addStep = useCallback((title: string, duration: number) => {
+  const addStep = useCallback((title: string, duration: number, emoji?: string) => {
     const preset = DEFAULT_STEP_PRESETS.find(p => p.title === title);
     const newStep: Step = {
       id: `${Date.now()}`,
       title,
       duration,
-      emoji: preset?.emoji || '📋',
+      emoji: emoji || preset?.emoji || '📋',
       isCompleted: false,
     };
     // Insert new step before the last one (airport buffer)

@@ -3,12 +3,13 @@ import React, { useState } from 'react';
 import { DEFAULT_STEP_PRESETS } from '../constants';
 
 interface AddStepFormProps {
-  onAddStep: (title: string, duration: number) => void;
+  onAddStep: (title: string, duration: number, emoji?: string) => void;
 }
 
 const AddStepForm: React.FC<AddStepFormProps> = ({ onAddStep }) => {
   const [selectedPreset, setSelectedPreset] = useState(DEFAULT_STEP_PRESETS[0].title);
   const [customTitle, setCustomTitle] = useState('');
+  const [customEmoji, setCustomEmoji] = useState('📋');
   const [duration, setDuration] = useState(DEFAULT_STEP_PRESETS[0].defaultDuration);
   const [isCustom, setIsCustom] = useState(false);
 
@@ -32,12 +33,13 @@ const AddStepForm: React.FC<AddStepFormProps> = ({ onAddStep }) => {
     e.preventDefault();
     const title = isCustom ? customTitle : selectedPreset;
     if (title && duration > 0) {
-      onAddStep(title, duration);
+      onAddStep(title, duration, isCustom ? customEmoji : undefined);
       // Reset form
       setIsCustom(false);
       setSelectedPreset(DEFAULT_STEP_PRESETS[0].title);
       setDuration(DEFAULT_STEP_PRESETS[0].defaultDuration);
       setCustomTitle('');
+      setCustomEmoji('📋');
     }
   };
 
@@ -46,16 +48,28 @@ const AddStepForm: React.FC<AddStepFormProps> = ({ onAddStep }) => {
       <h3 className="text-xl font-semibold mb-3 text-brand-gray-800">Add a New Step</h3>
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row items-end gap-3">
         <div className="flex-grow w-full">
-          <label htmlFor="step-preset" className="block text-sm font-medium text-brand-gray-700">Step</label>
+          <label htmlFor={isCustom ? 'custom-title' : 'step-preset'} className="block text-sm font-medium text-brand-gray-700">Step</label>
           {isCustom ? (
-            <input
-              type="text"
-              value={customTitle}
-              onChange={(e) => setCustomTitle(e.target.value)}
-              placeholder="Enter custom step name"
-              className="mt-1 block w-full border-brand-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white"
-              required
-            />
+            <div className="mt-1 flex items-center gap-2">
+              <input
+                type="text"
+                value={customEmoji}
+                onChange={(e) => setCustomEmoji(e.target.value)}
+                className="w-14 text-center text-2xl p-1.5 border-brand-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white"
+                placeholder="📋"
+                maxLength={2}
+                aria-label="Emoji for custom step"
+              />
+              <input
+                id="custom-title"
+                type="text"
+                value={customTitle}
+                onChange={(e) => setCustomTitle(e.target.value)}
+                placeholder="Enter custom step name"
+                className="block w-full border-brand-gray-300 rounded-md shadow-sm focus:ring-brand-blue focus:border-brand-blue bg-white"
+                required
+              />
+            </div>
           ) : (
             <select
               id="step-preset"
