@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { Step, ScheduledStep } from './types';
@@ -7,15 +8,49 @@ import Schedule from './components/Schedule';
 import AddStepForm from './components/AddStepForm';
 import ActionButtons from './components/ActionButtons';
 
+// Define the interface for the BeforeInstallPromptEvent
+interface BeforeInstallPromptEvent extends Event {
+  readonly platforms: string[];
+  readonly userChoice: Promise<{
+    outcome: 'accepted' | 'dismissed';
+    platform: string;
+  }>;
+  prompt(): Promise<void>;
+}
+
 const App: React.FC = () => {
   const [steps, setSteps] = useLocalStorage<Step[]>('on-time-traveler-steps', INITIAL_STEPS_CONFIG);
   const [departureTime, setDepartureTime] = useState('12:00');
   const [scheduledSteps, setScheduledSteps] = useState<ScheduledStep[]>([]);
   const [isClient, setIsClient] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    const handleAppInstalled = () => {
+      // Hide the app-provided install promotion
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 
   useEffect(() => {
@@ -31,6 +66,18 @@ const App: React.FC = () => {
 
     setScheduledSteps(newScheduledSteps);
   }, [steps, departureTime]);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) {
+      return;
+    }
+    // Show the install prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    await deferredPrompt.userChoice;
+    // We've used the prompt, and can't use it again, throw it away
+    setDeferredPrompt(null);
+  };
 
   const addStep = useCallback((title: string, duration: number, emoji?: string) => {
     const preset = DEFAULT_STEP_PRESETS.find(p => p.title === title);
@@ -96,14 +143,34 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen font-sans text-brand-gray-800 p-4 sm:p-6 lg:p-8 flex flex-col items-center">
       <div className="w-full max-w-2xl mx-auto">
-        <header className="text-center mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold text-brand-gray-900">On-Time Traveler</h1>
-          <p className="text-lg text-brand-gray-600 mt-2 flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Be on time stress free
-          </p>
+        <header className="flex justify-between items-center mb-8">
+          <div className="flex-1"></div>
+          <div className="text-center flex-shrink-0 px-4">
+            <h1 className="text-4xl sm:text-5xl font-bold text-brand-gray-900">On-Time Traveler</h1>
+            <p className="text-lg text-brand-gray-600 mt-2 flex items-center justify-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Be on time stress free
+            </p>
+          </div>
+          <div className="flex-1 flex justify-end">
+            {deferredPrompt && (
+              <button
+                onClick={handleInstallClick}
+                className="flex items-center gap-2 px-4 py-2 text-base bg-blue-500 text-white font-bold rounded-full shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                aria-label="Install App"
+                title="Install App"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+                  <polyline strokeLinecap="round" strokeLinejoin="round" points="7 11 12 16 17 11" />
+                  <line strokeLinecap="round" strokeLinejoin="round" x1="12" y1="4" x2="12" y2="16" />
+                </svg>
+                <span>Install</span>
+              </button>
+            )}
+          </div>
         </header>
 
         <main className="bg-white rounded-xl shadow-lg p-6 space-y-6">
