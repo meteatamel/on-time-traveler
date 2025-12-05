@@ -1,36 +1,36 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8" />
-  <link rel="manifest" href="/manifest.json">
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>On-Time Traveler</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'brand-blue': '#1a73e8',
-            'brand-gray': {
-              '50': '#f7fafc',
-              '100': '#edf2f7',
-              '200': '#e2e8f0',
-              '300': '#cbd5e0',
-              '400': '#a0aec0',
-              '500': '#718096',
-              '600': '#4a5568',
-              '700': '#2d3748',
-              '800': '#1a202c',
-              '900': '#171923',
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>On-Time Traveler</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'brand-blue': '#1a73e8',
+              'brand-gray': {
+                '50': '#f7fafc',
+                '100': '#edf2f7',
+                '200': '#e2e8f0',
+                '300': '#cbd5e0',
+                '400': '#a0aec0',
+                '500': '#718096',
+                '600': '#4a5568',
+                '700': '#2d3748',
+                '800': '#1a202c',
+                '900': '#171923',
+              },
             },
           },
         },
-      },
-    }
-  </script>
+      }
+    </script>
   <script type="importmap">
 {
   "imports": {
@@ -41,10 +41,8 @@
 }
 </script>
 </head>
-
-<body class="bg-brand-gray-50">
-  <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
-
+  <body class="bg-brand-gray-50">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>
